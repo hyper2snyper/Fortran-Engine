@@ -1,0 +1,17 @@
+Action
+Timer
+
+
+
+
+
+                                Primary Loop
+                                /           \
+                        Screen Handler      Input Handler
+                        /
+                    Screen
+                    /
+                Menu
+            /    |   \
+    Selection   Log   Canvas
+                        
