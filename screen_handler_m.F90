@@ -32,6 +32,7 @@ contains
         class(screen), allocatable :: out
         allocate(out)
         allocate(out%canvas(x,y))
+        allocate(out%canvas_colors(x,y))
         call out%screen_clear()
         out%canvas_size%x = x
         out%canvas_size%y = y        
@@ -97,11 +98,13 @@ contains
     implicit none
         integer :: input    
         integer(c_int) :: x, y
+        type(color_pair) :: color
         call screens(active_screen)%instance%refresh(input)
 
         do x=1, screens(active_screen)%instance%canvas_size%x
             do y=1, screens(active_screen)%instance%canvas_size%y
-                call write_to(x, y, screens(active_screen)%instance%canvas(x,y))
+                color = screens(active_screen)%instance%canvas_colors(x,y)
+                call write_to(x, y, screens(active_screen)%instance%canvas(x,y), color%text, color%background)
             end do
         end do
 

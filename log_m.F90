@@ -4,9 +4,15 @@ use screen_m
 #define LOG_LEN 100
 #define LOG_MESSAGE_SIZE 100
 
+    type :: log_message
+        character(len=LOG_MESSAGE_SIZE) :: message = ""
+
+    end type
+
+
     type, extends(window) :: log
-        character(len=LOG_MESSAGE_SIZE), dimension(:) :: log_test(LOG_LEN)
-        integer :: size
+        type(log_message), dimension(:) :: log_list(LOG_LEN)
+        integer :: size = 0
     contains
         procedure :: refresh => log_refresh
         procedure :: add_message
@@ -19,11 +25,25 @@ contains
     implicit none
         class(log) :: self
         integer :: input
+        integer :: i
+        integer :: j
 
         call self%window_clear()
         call self%draw_border()
 
+        if(self%size == 0) then
+            return
+        end if
 
+        do i=self%size, 1, -1
+            do j=1, self%bounds%x-2
+                if(self%log_list(i)%message(j:) == char(0)) then
+                    exit
+                end if
+                self%window_canvas(self%bounds%y-i, j+1) = self%log_list(i)%message(j:)
+            end do
+        
+        end do
 
 
     end subroutine
@@ -33,14 +53,28 @@ contains
         class(log) :: self
         character(len=*) :: text
         character(len=LOG_MESSAGE_SIZE) :: formatted_text
+        integer :: i
 
         formatted_text = trim(text)//char(0)
+        self%size = self%size+1
 
+        if(self%size > LOG_LEN) then
+            do i=1, LOG_LEN-1
+                self%log_list(i)%message = self%log_list(i+1)%message
+            end do            
+        end if
 
+        self%log_list(self%size)%message = formatted_text
+       
         
     end subroutine
 
+    subroutine log_clear(self)
+    implicit none
+        class(log) :: self
 
+        self%size = 0
+    end subroutine
     
 
 end module

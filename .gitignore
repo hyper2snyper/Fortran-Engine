@@ -1,3 +1,6 @@
 debug/*
 debug/mod/*
 debug/out/*
+*.o
+*.a
+*.mod

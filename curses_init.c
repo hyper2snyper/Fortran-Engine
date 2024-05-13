@@ -8,11 +8,13 @@ void initialize(bool* no_delay)
     raw();
     keypad(stdscr, TRUE);
     noecho();
+    start_color();
     refresh();
 }
 
-void write_to(int* x, int* y, char* character)
+void write_to(int* x, int* y, char* character, int* text_color, int* background_color)
 {
+    
     mvaddch(*x, *y, *character);
 }
 

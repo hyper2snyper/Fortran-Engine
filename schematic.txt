@@ -3,8 +3,6 @@ Timer
 
 
 
-
-
                                 Primary Loop
                                 /           \
                         Screen Handler      Input Handler
@@ -13,5 +11,7 @@ Timer
                     /
                 Menu
             /    |   \
-    Selection   Log   Canvas
+    Selection   Log   Game Space
+                          |
+                       Object - Object Action
                         

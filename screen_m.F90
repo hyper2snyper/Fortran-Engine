@@ -1,6 +1,11 @@
 module screen_m
     use vector2_m
 
+    type :: color_pair
+        integer :: text = 7
+        integer :: background = 0
+    end type
+
     type :: window_container
         class(window), pointer :: instance
     contains
@@ -12,6 +17,7 @@ module screen_m
         class(screen), pointer :: parent
 
         character, allocatable, dimension(:,:) :: window_canvas
+        type(color_pair), allocatable, dimension(:,:) :: window_colors
 
     contains
         procedure(window_refresh_), deferred :: refresh
@@ -26,6 +32,7 @@ module screen_m
         integer :: size=2, index=1
 
         character, allocatable, dimension(:,:) :: canvas
+        type(color_pair), allocatable, dimension(:,:) :: canvas_colors
         type(vector2) :: canvas_size
 
     contains
@@ -112,13 +119,15 @@ contains
         class(screen) :: self
         integer :: input, i
         integer :: x,y
-
+        type(color_pair) :: color
         call self%screen_clear()
 
         do i=1, self%index
             call self%windows(i)%instance%refresh(input)
             do y=1, self%windows(i)%instance%bounds%y
                 do x=1, self%windows(i)%instance%bounds%x
+        color = self%windows(i)%instance%window_colors(x,y)
+        self%canvas_colors(self%windows(i)%instance%pos%x+x,self%windows(i)%instance%pos%y+y) = color
         !Do not tab, there is a limit to line length for some reason 
         self%canvas(self%windows(i)%instance%pos%x+x,self%windows(i)%instance%pos%y+y) = self%windows(i)%instance%window_canvas(x,y)
                 end do
