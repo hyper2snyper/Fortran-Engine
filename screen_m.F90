@@ -18,10 +18,13 @@ module screen_m
         character :: fill_char = ' '
         type(color_pair) :: color_fill
 
+        logical :: border = .true.
+
         character, allocatable, dimension(:,:) :: window_canvas
         type(color_pair), allocatable, dimension(:,:) :: window_colors
 
     contains
+        procedure :: window_refresh
         procedure(window_refresh_), deferred :: refresh
         procedure :: window_clear
         procedure :: set_size
@@ -63,6 +66,20 @@ contains
 
     !window
 
+    subroutine window_refresh(self, input)
+    implicit none
+        class(window) :: self
+        integer :: input
+
+        call self%window_clear()
+        if(self%border) then
+            call self%draw_border()
+        end if
+
+        call self%refresh(input)
+    end subroutine
+
+
     subroutine window_clear(self)
     implicit none
         class(window) :: self
@@ -103,10 +120,10 @@ contains
     implicit none
         class(window) :: self
 
-        self%window_canvas(1,:) = '-'
-        self%window_canvas(self%bounds%x,:) = '-'
-        self%window_canvas(:,1) = '|'
-        self%window_canvas(:,self%bounds%y) = '|'
+        self%window_canvas(1,:) = '|'
+        self%window_canvas(self%bounds%x,:) = '|'
+        self%window_canvas(:,1) = '-'
+        self%window_canvas(:,self%bounds%y) = '-'
         self%window_canvas(1,1) = '+'
         self%window_canvas(1,self%bounds%y) = '+'
         self%window_canvas(self%bounds%x,1) = '+'
@@ -171,9 +188,9 @@ contains
         call self%screen_clear()
 
         do i=1, self%index
-            call self%windows(i)%instance%refresh(input)
-            do y=1, self%windows(i)%instance%bounds%y
-                do x=1, self%windows(i)%instance%bounds%x
+            call self%windows(i)%instance%window_refresh(input)
+            do x=1, self%windows(i)%instance%bounds%x
+                do y=1, self%windows(i)%instance%bounds%y
         color = self%windows(i)%instance%window_colors(x,y)
         self%canvas_colors(self%windows(i)%instance%pos%x+x,self%windows(i)%instance%pos%y+y) = color
         !Do not tab, there is a limit to line length for some reason 

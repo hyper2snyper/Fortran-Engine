@@ -104,7 +104,7 @@ contains
         do x=1, screens(active_screen)%instance%canvas_size%x
             do y=1, screens(active_screen)%instance%canvas_size%y
                 color = screens(active_screen)%instance%canvas_colors(x,y)
-                call write_to(x, y, screens(active_screen)%instance%canvas(x,y), color%text, color%background)
+                call write_to(x-1, y-1, screens(active_screen)%instance%canvas(x,y), color%text, color%background)
             end do
         end do
 

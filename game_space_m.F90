@@ -87,10 +87,11 @@ contains
         type(color_pair), dimension(:,:), allocatable :: colors
         character, dimension(:,:), allocatable :: canvas
         type(vector2) :: canvas_bounds
-        integer :: j, v
-        type(vector2) :: start
+        type(vector2) :: d_pos, s_pos
+        integer :: x,y,c,v
         logical :: h
-        integer :: x,y
+
+
         if(self%glyph == char(0) .and. .not. self%use_multi_sprite) then
             return
         end if
@@ -113,61 +114,57 @@ contains
 
         select case(self%multi_sprite%rotation)
             case(0)
-                start%x = self%pos%x+self%multi_sprite%center%x
-                start%y = self%pos%y+self%multi_sprite%center%y
                 v = 1
-                h = .false.
+                s_pos%x = self%pos%x-self%multi_sprite%center%x
+                s_pos%y = self%pos%y-self%multi_sprite%center%y
+                h=.false.
             case(1)
-                start%x = self%pos%x+self%multi_sprite%center%x+self%multi_sprite%bounds%x+1
-                start%y = self%pos%y+self%multi_sprite%center%y+self%multi_sprite%bounds%y+1
                 v = -1
-                h = .true.
+                s_pos%x = self%pos%x+self%multi_sprite%center%x
+                s_pos%y = self%pos%y+self%multi_sprite%center%y
+                h=.true.
             case(2)
-                start%x = self%pos%x+self%multi_sprite%center%x+self%multi_sprite%bounds%x+1
-                start%y = self%pos%y+self%multi_sprite%center%y+self%multi_sprite%bounds%y+1
                 v = -1
-                h = .false.     
+                s_pos%x = self%pos%x+self%multi_sprite%center%x
+                s_pos%y = self%pos%y+self%multi_sprite%center%y
+                h=.false.  
             case(3)
-                start%x = self%pos%x+self%multi_sprite%center%x
-                start%y = self%pos%y+self%multi_sprite%center%y
                 v = 1
-                h = .true.
+                s_pos%x = self%pos%x-self%multi_sprite%center%x
+                s_pos%y = self%pos%y-self%multi_sprite%center%y
+                h=.true.
+                
         end select
-        j=1
-        if(h) then
+        c=1
+        do y=1, self%multi_sprite%bounds%y
             do x=1, self%multi_sprite%bounds%x
-                do y=1, self%multi_sprite%bounds%y
-                    if(self%multi_sprite%sprite(j:) == ' ') then
-                        cycle
-                    end if
-                    canvas(start%x+(y*v),start%y+(x*v)) = self%multi_sprite%sprite(j:)
-                    if(self%color%text /= -1) then
-                        colors(start%x+(y*v),start%y+(x*v))%text = self%color%text
-                    end if
-                    if(self%color%background /= -1) then
-                        colors(start%x+(y*v),start%y+(x*v))%background = self%color%background
-                    end if
-                    j=j+1
-                end do
-            end do
-            return
-        end if
-        do x=1, self%multi_sprite%bounds%x
-            do y=1, self%multi_sprite%bounds%y
-                if(self%multi_sprite%sprite(j:) == ' ') then
+                if(h) then
+                    d_pos%y = s_pos%x+(x*v)
+                    d_pos%x = s_pos%y+(y*v)
+                else
+                    d_pos%x = s_pos%x+(x*v)
+                    d_pos%y = s_pos%y+(y*v)
+                end if
+
+                if(d_pos%x < 1 .or. d_pos%x > canvas_bounds%x) then
+                    c=c+1
                     cycle
                 end if
-                canvas(start%x+(x*v),start%y+(y*v)) = self%multi_sprite%sprite(j:)
+                if(d_pos%y < 1 .or. d_pos%y > canvas_bounds%y) then
+                    c=c+1
+                    cycle
+                end if
+                canvas(d_pos%x, d_pos%y) = self%multi_sprite%sprite(c:)
+                
                 if(self%color%text /= -1) then
-                    colors(start%x+(x*v),start%y+(y*v))%text = self%color%text
+                    colors(d_pos%x, d_pos%y)%text = self%color%text  
                 end if
                 if(self%color%background /= -1) then
-                    colors(start%x+(x*v),start%y+(y*v))%background = self%color%background
+                    colors(d_pos%x, d_pos%y)%background = self%color%background  
                 end if
-                j=j+1
+                c=c+1
             end do
         end do
-
     end subroutine
 
 

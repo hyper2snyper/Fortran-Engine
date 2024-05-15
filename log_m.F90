@@ -28,8 +28,6 @@ contains
         integer :: i
         integer :: j
 
-        call self%window_clear()
-        call self%draw_border()
 
         if(self%size == 0) then
             return

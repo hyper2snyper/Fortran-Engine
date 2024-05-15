@@ -42,10 +42,6 @@ contains
         integer :: i, j
         character :: inputted_key
 
-        call self%window_clear()
-
-        call self%draw_border()
-
         if(self%size == 0) then
             return
         end if

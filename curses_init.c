@@ -58,7 +58,7 @@ void write_to(int* x, int* y, char* character, int* text_color, int* background_
 {
 
     setcolor(*text_color, *background_color);
-    mvaddch(*x, *y, *character);
+    mvaddch(*y, *x, *character);
     unsetcolor(*text_color, *background_color);
     
 }

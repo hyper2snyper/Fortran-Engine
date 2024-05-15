@@ -2,7 +2,7 @@ MOD := ./mod
 OUT := ./out
 
 
-all: action_m input_handler_m main_loop_m screen_handler_m screen_m vector2_m curses_m curses_init main selection_m log_m game_space_m object_action_m
+all: action_m input_handler_m main_loop_m screen_handler_m screen_m vector2_m curses_m curses_init main selection_m log_m game_space_m object_action_m label_m timer_m
 	gfortran  -g -Wall $(OUT)/*.o -o out.a -lncurses
 
 action_m: ../action_m.F90
@@ -40,6 +40,13 @@ game_space_m: ../game_space_m.F90
 
 object_action_m: ../object_action_m.F90
 	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../object_action_m.F90 -o $(OUT)/object_action_m.o
+
+label_m: ../label_m.F90
+	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../label_m.F90 -o $(OUT)/label_m.o
+
+timer_m: ../timer_m.F90
+	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../timer_m.F90 -o $(OUT)/timer_m.o
+
 
 main: ../main.F90
 	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../main.F90 -o $(OUT)/main.o

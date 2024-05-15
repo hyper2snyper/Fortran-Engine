@@ -8,7 +8,7 @@ use input_handler_m, only:input_update, no_delay
         real :: seconds_per_update = 1.0/60 !60 fps
         logical :: no_delay = .true.
         type(action) :: on_update
-
+        integer :: cycles = 0
     contains
         procedure :: start_loop
         procedure :: initialize
@@ -30,7 +30,6 @@ contains
         class(main_loop) :: self
         real :: current_time
         real :: delta_time
-        integer :: cycles = 0
         do while(.true.)
             if(self%no_delay) then
                 call cpu_time(delta_time)
@@ -39,8 +38,8 @@ contains
                     cycle
                 end if
                 call cpu_time(current_time)
-                cycles = cycles+1
-                call self%on_update%invoke(cycles)
+                self%cycles = self%cycles+1
+                call self%on_update%invoke(self%cycles)
                 call curses_refresh()
                 cycle
             end if
