@@ -23,6 +23,7 @@ module screen_m
         procedure(window_refresh_), deferred :: refresh
         procedure :: window_clear
         procedure :: set_size
+        procedure :: set_color
         procedure :: draw_border
     end type
 
@@ -75,11 +76,23 @@ contains
 
         if(self%bounds%x > 0 .or. self%bounds%y > 0) then
             deallocate(self%window_canvas)
+            deallocate(self%window_colors)
         end if
 
         self%bounds = new_bounds
         allocate(self%window_canvas(new_bounds%x,new_bounds%y))
+        allocate(self%window_colors(new_bounds%x,new_bounds%y))
         call self%window_clear()
+    end subroutine
+
+    subroutine set_color(self, text_color, background_color)
+    implicit none
+        class(window) :: self
+        type(color_pair) :: color
+        integer :: text_color, background_color
+        color%text = text_color
+        color%background = background_color
+        self%window_colors(:,:) = color
     end subroutine
 
     subroutine draw_border(self)

@@ -14,8 +14,13 @@ void initialize(bool* no_delay)
 
 void write_to(int* x, int* y, char* character, int* text_color, int* background_color)
 {
+
+    init_pair(1, *text_color,*background_color);
+    //attron(COLOR_PAIR(1));
+
+    mvaddch(*x, *y, *character | COLOR_PAIR(1));
+    //attroff(COLOR_PAIR(1));
     
-    mvaddch(*x, *y, *character);
 }
 
 void print(char* str)

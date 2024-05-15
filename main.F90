@@ -33,6 +33,8 @@ implicit none
     log1%pos%x = 3
     log1%pos%y = 3
 
+    call log1%set_color(3,0)
+
     call main_i%start_loop()
 
 end program

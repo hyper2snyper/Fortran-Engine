@@ -36,7 +36,7 @@ log_m: ../log_m.F90
 	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../log_m.F90 -o $(OUT)/log_m.o
 
 game_space_m: ../game_space_m.F90
-	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ..game_space_m.F90 -o $(OUT)/game_space_m.o
+	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../game_space_m.F90 -o $(OUT)/game_space_m.o
 
 main: ../main.F90
 	gfortran -I$(MOD) -J$(MOD) -c -g -Wall ../main.F90 -o $(OUT)/main.o
