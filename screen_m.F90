@@ -25,6 +25,7 @@ module screen_m
         procedure :: set_size
         procedure :: set_color
         procedure :: draw_border
+        procedure :: fill_section
     end type
 
 
@@ -109,6 +110,37 @@ contains
         self%window_canvas(self%bounds%x,self%bounds%y) = '+'
     
     end subroutine
+
+
+
+    subroutine fill_section(self, char, x, y)
+        implicit none
+            class(window) :: self
+            character :: char
+            integer, optional :: x, y
+            integer :: x_=0, y_=0
+    
+            if(present(x)) then
+                x_ = x
+            end if
+            if(present(y)) then
+                y_ = y
+            end if
+            
+            if(x_ == 0 .and. y_ == 0) then
+                self%window_canvas(:,:) = char
+                return
+            end if
+    
+            if(x_ == 0 ) then
+                self%window_canvas(:,y_) = char
+                return
+            end if
+    
+            self%window_canvas(x_,:) = char
+    
+    
+        end subroutine
 
     !screen
 

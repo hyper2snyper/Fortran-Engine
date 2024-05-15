@@ -1,16 +1,31 @@
 module game_space_m
 use screen_m
 
+
+    type :: sprite_t
+        character(len=100) :: sprite = ""
+        type(vector2) :: center
+        type(vector2) :: bounds
+    contains
+    end type
+
     type :: object
         class(game_space), pointer :: parent
 
-        character :: glyph = ''
+        character :: glyph = char(0)
+        type(color_pair) :: color
+        type(vector2) :: pos
+        integer :: rotation = 0
+
+        type(sprite_t) :: multi_sprite
+        logical :: use_multi_sprite = .false.
 
         procedure(object_on_update), pointer :: on_update => null()
         procedure(object_initialize), pointer :: initialize => null()
         procedure(object_on_delete), pointer :: on_destroy => null()
     contains
         procedure :: delete
+        procedure :: draw
     end type
 
 
@@ -64,6 +79,42 @@ contains
         call self%parent%remove_object(self)
     end subroutine
 
+
+
+    subroutine draw(self, canvas, colors, canvas_bounds)
+    implicit none
+        class(object) :: self
+        type(color_pair), dimension(:,:), allocatable :: colors
+        character, dimension(:,:), allocatable :: canvas
+        type(vector2) :: canvas_bounds
+
+        if(self%glyph == char(0) .and. .not. self%use_multi_sprite) then
+            return
+        end if
+        if(.not. self%use_multi_sprite) then
+            if(self%pos%x > canvas_bounds%x .or. self%pos%x < 0) then
+                return
+            end if
+            if(self%pos%y > canvas_bounds%y .or. self%pos%y < 0) then
+                return
+            end if
+            canvas(self%pos%x, self%pos%y) = self%glyph
+            if(self%color%text /= -1) then
+                colors(self%pos%x, self%pos%y)%text = self%color%text
+            end if
+            if(self%color%background /= -1) then
+                colors(self%pos%x, self%pos%y)%background = self%color%background
+            end if
+            return
+        end if
+        
+
+
+
+    end subroutine
+
+
+
 !game_space
 
 subroutine game_space_refresh(self, input)
@@ -71,10 +122,18 @@ implicit none
     class(game_space) :: self
     integer :: input
     integer :: i
+    class(object), pointer :: o
+    
+
+    if(.not. allocated(self%objects)) then
+        return
+    end if
 
     do i=1, self%index
-        if(associated(self%objects(i)%item%on_update)) then
-            call self%objects(i)%item%on_update(input)
+        o => self%objects(i)%item
+        call o%draw(self%window_canvas, self%window_colors, self%bounds)
+        if(associated(o%on_update)) then
+            call o%on_update(input)
         end if
     end do
     
