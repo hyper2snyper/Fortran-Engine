@@ -6,6 +6,7 @@ use screen_m
         character(len=100) :: sprite = ""
         type(vector2) :: center
         type(vector2) :: bounds
+        integer :: rotation = 0
     contains
     end type
 
@@ -15,7 +16,6 @@ use screen_m
         character :: glyph = char(0)
         type(color_pair) :: color
         type(vector2) :: pos
-        integer :: rotation = 0
 
         type(sprite_t) :: multi_sprite
         logical :: use_multi_sprite = .false.
@@ -87,7 +87,10 @@ contains
         type(color_pair), dimension(:,:), allocatable :: colors
         character, dimension(:,:), allocatable :: canvas
         type(vector2) :: canvas_bounds
-
+        integer :: j, v
+        type(vector2) :: start
+        logical :: h
+        integer :: x,y
         if(self%glyph == char(0) .and. .not. self%use_multi_sprite) then
             return
         end if
@@ -107,9 +110,63 @@ contains
             end if
             return
         end if
-        
 
-
+        select case(self%multi_sprite%rotation)
+            case(0)
+                start%x = self%pos%x+self%multi_sprite%center%x
+                start%y = self%pos%y+self%multi_sprite%center%y
+                v = 1
+                h = .false.
+            case(1)
+                start%x = self%pos%x+self%multi_sprite%center%x+self%multi_sprite%bounds%x+1
+                start%y = self%pos%y+self%multi_sprite%center%y+self%multi_sprite%bounds%y+1
+                v = -1
+                h = .true.
+            case(2)
+                start%x = self%pos%x+self%multi_sprite%center%x+self%multi_sprite%bounds%x+1
+                start%y = self%pos%y+self%multi_sprite%center%y+self%multi_sprite%bounds%y+1
+                v = -1
+                h = .false.     
+            case(3)
+                start%x = self%pos%x+self%multi_sprite%center%x
+                start%y = self%pos%y+self%multi_sprite%center%y
+                v = 1
+                h = .true.
+        end select
+        j=1
+        if(h) then
+            do x=1, self%multi_sprite%bounds%x
+                do y=1, self%multi_sprite%bounds%y
+                    if(self%multi_sprite%sprite(j:) == ' ') then
+                        cycle
+                    end if
+                    canvas(start%x+(y*v),start%y+(x*v)) = self%multi_sprite%sprite(j:)
+                    if(self%color%text /= -1) then
+                        colors(start%x+(y*v),start%y+(x*v))%text = self%color%text
+                    end if
+                    if(self%color%background /= -1) then
+                        colors(start%x+(y*v),start%y+(x*v))%background = self%color%background
+                    end if
+                    j=j+1
+                end do
+            end do
+            return
+        end if
+        do x=1, self%multi_sprite%bounds%x
+            do y=1, self%multi_sprite%bounds%y
+                if(self%multi_sprite%sprite(j:) == ' ') then
+                    cycle
+                end if
+                canvas(start%x+(x*v),start%y+(y*v)) = self%multi_sprite%sprite(j:)
+                if(self%color%text /= -1) then
+                    colors(start%x+(x*v),start%y+(y*v))%text = self%color%text
+                end if
+                if(self%color%background /= -1) then
+                    colors(start%x+(x*v),start%y+(y*v))%background = self%color%background
+                end if
+                j=j+1
+            end do
+        end do
 
     end subroutine
 
@@ -123,6 +180,8 @@ implicit none
     integer :: input
     integer :: i
     class(object), pointer :: o
+
+    call self%window_clear()
     
 
     if(.not. allocated(self%objects)) then

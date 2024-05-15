@@ -15,6 +15,8 @@ module screen_m
         type(vector2) :: pos
         type(vector2) :: bounds
         class(screen), pointer :: parent
+        character :: fill_char = ' '
+        type(color_pair) :: color_fill
 
         character, allocatable, dimension(:,:) :: window_canvas
         type(color_pair), allocatable, dimension(:,:) :: window_colors
@@ -67,7 +69,8 @@ contains
         if(.not. allocated(self%window_canvas)) then
             return
         end if
-        self%window_canvas(:,:) = ' '
+        self%window_canvas(:,:) = self%fill_char
+        self%window_colors(:,:) = self%color_fill
     end subroutine
     
     subroutine set_size(self, new_bounds)
