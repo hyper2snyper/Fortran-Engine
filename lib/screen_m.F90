@@ -1,6 +1,7 @@
 module screen_m
     use vector2_m
 
+
     type :: color_pair
         integer :: text = 7
         integer :: background = 0

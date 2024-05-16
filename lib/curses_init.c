@@ -27,18 +27,21 @@ void init_colorpairs()
     }
 }
 
+void set_no_delay(bool* no_delay)
+{
+    nodelay(stdscr, *no_delay);
+}
 
-void initialize(bool* no_delay)
+
+void initialize()
 {
     initscr();
     cbreak();
-    nodelay(stdscr, *no_delay);
     raw();
     keypad(stdscr, TRUE);
     noecho();
     start_color();
     init_colorpairs();
-    refresh();
 }
 
 

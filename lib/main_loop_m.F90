@@ -19,8 +19,9 @@ contains
     implicit none
         class(main_loop) :: self
         procedure(action_callback), pointer :: p => input_update
-
-        call init_curses(logical(self%no_delay,kind=c_bool))
+        
+        call init_curses()
+        call set_nodelay(logical(self%no_delay,kind=c_bool))
         call self%on_update%add_action(p)
         no_delay = self%no_delay
     end subroutine

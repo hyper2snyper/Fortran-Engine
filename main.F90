@@ -22,8 +22,6 @@ end subroutine
     
 end module test
 
-
-
 program main
     use main_loop_m
     use screen_handler_m
@@ -40,8 +38,6 @@ implicit none
     class(object), pointer :: object1
     procedure(action_callback), pointer :: p1 => rotate_thing
     class(label), pointer :: label1
-
-    !main_i%no_delay = .false.
 
     call register_to_loop(main_i)
     call main_i%on_update%add_action(p1)
@@ -91,5 +87,5 @@ implicit none
 
     call main_i%start_loop()
 
-end program
+end program main
 
