@@ -32,6 +32,10 @@ void set_no_delay(bool* no_delay)
     nodelay(stdscr, *no_delay);
 }
 
+void clear_screen()
+{
+    clear();
+}
 
 void initialize()
 {

@@ -121,6 +121,10 @@ contains
     implicit none
         class(window) :: self
 
+        if(.not. allocated(self%window_canvas)) then
+            return
+        end if
+
         self%window_canvas(1,:) = '|'
         self%window_canvas(self%bounds%x,:) = '|'
         self%window_canvas(:,1) = '-'
@@ -188,6 +192,10 @@ contains
         type(color_pair) :: color
         call self%screen_clear()
 
+        if(.not. allocated(self%windows)) then
+            return
+        end if
+
         do i=1, self%index
             call self%windows(i)%instance%window_refresh(input)
             do x=1, self%windows(i)%instance%bounds%x
@@ -211,8 +219,8 @@ contains
         new_window%parent => self
 
         if(.not. allocated(self%windows)) then
-            allocate(self%windows(2))
-            self%windows(1)%instance => new_window
+            allocate(self%windows(self%size))
+            self%windows(self%index)%instance => new_window
             return
         end if
 

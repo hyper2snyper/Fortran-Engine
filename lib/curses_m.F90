@@ -25,6 +25,9 @@ interface
     implicit none
         logical(kind=c_bool) :: no_delay
     end subroutine
+    subroutine clear_screen() bind(C, name='clear_screen')
+    implicit none
+    end subroutine
 end interface
 
 

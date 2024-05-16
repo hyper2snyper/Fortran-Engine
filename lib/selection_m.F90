@@ -48,13 +48,13 @@ contains
 
         do i=1, self%size
             if(self%selection == i) then
-                self%window_canvas(i+1,2) = '>'
+                self%window_canvas(2, i+1) = '>'
             end if
             do j=1, self%bounds%x-3
                 if(self%selection_list(i)%text(j:) == char(0)) then
                     exit
                 end if
-                self%window_canvas(i+1, j+3) = self%selection_list(i)%text(j:)
+                self%window_canvas(j+3, i+1) = self%selection_list(i)%text(j:)
             end do
         end do
 
@@ -91,7 +91,7 @@ contains
         self%size = self%size + 1
         parsed_text = trim(text)//char(0)
         self%selection_list(self%size)%text = parsed_text
-        if(associated(self%selection_list(self%size)%on_selection)) then
+        if(present(action)) then
             self%selection_list(self%size)%on_selection => action
         end if
        

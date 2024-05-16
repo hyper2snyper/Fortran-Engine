@@ -93,12 +93,18 @@ contains
 
     
     subroutine refresh_screens(input)
-    use curses_m, only:write_to
+    use curses_m, only:write_to, clear_screen
     use iso_c_binding
     implicit none
         integer :: input    
         integer(c_int) :: x, y
         type(color_pair) :: color
+
+        if(.not. allocated(screens)) then
+            return
+        end if
+
+        call clear_screen()
         call screens(active_screen)%instance%refresh(input)
 
         do x=1, screens(active_screen)%instance%canvas_size%x
@@ -122,7 +128,6 @@ contains
                 return
             end if
         end do
-
     end subroutine
 
 end module
