@@ -1,5 +1,6 @@
 module action_m
 
+    !The type. Subroutines are added to a list and when 'invoke' is called all of the subroutines are called.
     type, public :: action
         integer :: size, index = 1
         type(action_container), dimension(:), allocatable :: action_list
@@ -9,6 +10,7 @@ module action_m
         procedure :: remove_action
     end type
 
+    !Holds the pointer since you cannot make a list of abstract things
     type :: action_container
         procedure(action_callback), pointer, nopass :: callback => null()
     contains
@@ -22,7 +24,7 @@ module action_m
     end interface
 
 contains
-
+    !Calls all the subroutines contained in the action
     subroutine invoke(self, argument)
     implicit none
         class(action) :: self

@@ -1,3 +1,6 @@
+!A log window that can display scrolling messages
+
+
 module log_m
 use screen_m
 

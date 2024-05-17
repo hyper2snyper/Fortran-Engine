@@ -1,16 +1,18 @@
 module game_space_m
 use screen_m
 
-
+    !This is a multisprite holder
     type :: sprite_t
         character(len=100) :: sprite = ""
         type(vector2) :: center
         type(vector2) :: bounds
+        !0-3 with 0 being up and 3 being left
         integer :: rotation = 0
     contains
     end type
 
-    type :: object
+    !Game objects. They recieve tick updates.
+    type, abstract :: object
         class(game_space), pointer :: parent
 
         character :: glyph = char(0)
@@ -20,21 +22,22 @@ use screen_m
         type(sprite_t) :: multi_sprite
         logical :: use_multi_sprite = .false.
 
-        procedure(object_on_update), pointer :: on_update => null()
-        procedure(object_initialize), pointer :: initialize => null()
-        procedure(object_on_delete), pointer :: on_destroy => null()
     contains
         procedure :: delete
         procedure :: draw
+        procedure(object_on_update), deferred :: on_update
+        procedure(object_initialize), deferred :: initialize
+        procedure(object_on_delete), deferred :: on_destroy
+        
     end type
 
-
+    !No lists of abstract items, so container it is
     type :: object_container
         class(object), pointer :: item
     contains
     end type
 
-
+    !The actual game space window. Holds objects and manages its canvas.
     type, extends(window) :: game_space
         type(object_container), dimension(:), allocatable :: objects
         integer :: size=2, index=1
@@ -42,6 +45,7 @@ use screen_m
         procedure :: refresh => game_space_refresh
         procedure :: add_object
         procedure :: remove_object
+        procedure :: get_object_at_pos
     end type
 
 
@@ -49,19 +53,19 @@ use screen_m
     subroutine object_on_update(self, input)
     import object
     implicit none
-        class(object) :: self
+        class(object), target, intent(inout) :: self
         integer :: input
     end subroutine
     subroutine object_initialize(self, parent)
     import object, game_space
     implicit none
-        class(object) :: self
+        class(object), target, intent(inout) :: self
         class(game_space) :: parent
     end subroutine
     subroutine object_on_delete(self)
     import object
     implicit none
-        class(object) :: self
+        class(object), target, intent(inout) :: self
     end subroutine
     end interface
 
@@ -70,17 +74,17 @@ use screen_m
 contains
 
 !object
+
+    !deletes itself and removes it from its parent. Does not deallocate itself because I dont want to refactor the thing
     subroutine delete(self)
     implicit none
         class(object), target :: self
-        if(associated(self%on_destroy)) then
-            call self%on_destroy()
-        end if
+        call self%on_destroy()
         call self%parent%remove_object(self)
     end subroutine
 
 
-
+    !Draws itself onto canvas. It's really big because of multi-sprite stuff.
     subroutine draw(self, canvas, colors, canvas_bounds)
     implicit none
         class(object) :: self
@@ -171,6 +175,7 @@ contains
 
 !game_space
 
+!Game space update, clears window, then calls draw on all objects.
 subroutine game_space_refresh(self, input)
 implicit none
     class(game_space) :: self
@@ -188,28 +193,22 @@ implicit none
     do i=1, self%index
         o => self%objects(i)%item
         call o%draw(self%window_canvas, self%window_colors, self%bounds)
-        if(associated(o%on_update)) then
-            call o%on_update(input)
-        end if
+        call o%on_update(input)
     end do
-    
-
-
 end subroutine
 
 subroutine add_object(self, object_to_add)
 implicit none
-    class(game_space) :: self
-    class(object), pointer :: object_to_add
+    class(game_space), target :: self
+    class(object), pointer, intent(in) :: object_to_add
     type(object_container), dimension(:), allocatable :: new_objects
     integer :: i
 
     if(.not. allocated(self%objects)) then
         allocate(self%objects(self%size))
         self%objects(1)%item => object_to_add
-        if(associated(object_to_add%initialize)) then
-            call object_to_add%initialize(self)
-        end if
+        object_to_add%parent => self
+        call object_to_add%initialize(self)
         return
     end if
 
@@ -226,9 +225,8 @@ implicit none
     end if
 
     self%objects(self%index)%item => object_to_add
-    if(associated(object_to_add%initialize)) then
-        call object_to_add%initialize(self)
-    end if
+    object_to_add%parent => self
+    call object_to_add%initialize(self)
 
 
 end subroutine
@@ -256,9 +254,30 @@ implicit none
             end do
         end if
     end do
-
-
-
 end subroutine
+
+!Returns a pointer to an object at 'pos'. If excludes is set, then it ignores excludes.
+function get_object_at_pos(self, pos, excludes) result(found)
+implicit none
+    class(game_space) :: self
+    type(vector2) :: pos
+    class(object), pointer, optional , intent(in):: excludes
+    class(object), pointer :: found
+    integer :: i
+    found => null()
+    do i=1, self%index
+        if(self%objects(i)%item%pos%x /= pos%x .or. self%objects(i)%item%pos%y /= pos%y) then
+            cycle
+        end if
+        if(present(excludes)) then
+            if(associated(self%objects(i)%item, excludes)) then
+                cycle
+            end if
+        end if
+        found => self%objects(i)%item
+        return
+    end do
+end function
+
 
 end module

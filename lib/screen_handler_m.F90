@@ -1,3 +1,5 @@
+!The thing that manages screens.
+
 module screen_handler_m
 use screen_m
 
@@ -12,7 +14,7 @@ use screen_m
     integer :: active_screen=1
 
 contains
-
+    !Registers to a main_loop for updates and refresh instances
     subroutine register_to_loop(main_loop_o)
         use main_loop_m, only: main_loop
         use action_m, only: action_callback
@@ -25,7 +27,7 @@ contains
         call main_loop_o%on_update%add_action(s)
     end subroutine
 
-
+    !Returns a created screen. This needs to be done here because uh.... I can't remember
     function make_new_screen(x, y) result(out)
     implicit none
         integer :: x, y
@@ -117,6 +119,8 @@ contains
 
     end subroutine
 
+
+    !Sets the active screen. Only the active screen will be displayed to the terminal.
     subroutine set_active_screen(active)
     implicit none
         class(screen), target :: active

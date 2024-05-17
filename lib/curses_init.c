@@ -1,7 +1,7 @@
 #include <ncurses.h>
 
 
-
+///I stole this
 int colornum(int fg, int bg)
 {
     int B, bbb, ffff;
@@ -12,8 +12,7 @@ int colornum(int fg, int bg)
 
     return (B | bbb | ffff);
 }
-
-
+/// I stole this too
 void init_colorpairs()
 {
     int fg, bg;

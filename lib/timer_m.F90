@@ -1,3 +1,10 @@
+!A singleton module for calling actions after a certain amount of time.
+!It must be registered to a loop before use.
+!Timers can be looping or one-time
+!It has support for both object actions and static ones
+
+
+
 module timer_m
 use main_loop_m
 use game_space_m, only: object
@@ -21,10 +28,12 @@ use game_space_m, only: object
         subroutine static_callback()
         implicit none
         end subroutine
+    end interface
+    abstract interface
         subroutine object_callback(self)
         import object
         implicit none
-            class(object) :: self
+            class(object), intent(inout) :: self
         end subroutine
     end interface
 
@@ -58,7 +67,8 @@ contains
             else
                 call timers(i)%s_callback()
             end if
-            if(timers(i)%looping) then
+            if(timers(i)%looping) then                
+                timers(i)%start_tick = input
                 cycle
             end if
             len = len+1
@@ -89,7 +99,7 @@ contains
     subroutine object_start_timer(callback, object_to_add, delay, looping)
     implicit none
         procedure(object_callback), pointer :: callback
-        class(object), pointer :: object_to_add
+        class(object), pointer, intent(in) :: object_to_add
         integer :: delay
         logical :: looping
         type(timer_c) :: new_timer

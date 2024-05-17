@@ -1,3 +1,6 @@
+!This is just like action, but for objects. This allows calling non-static functions
+
+
 module object_action_m
 use game_space_m
 
@@ -17,9 +20,7 @@ use game_space_m
         procedure :: invoke
     end type
 
-
-
-    interface 
+    abstract interface 
     subroutine object_action_callback(self, input)
     import object
     implicit none
@@ -30,11 +31,10 @@ use game_space_m
 
 contains
 
-
-    subroutine add_action(self, object_to_add, action, *)
+    subroutine add_action(self, object_to_add, action)
     implicit none
         class(object_action) :: self
-        class(object), pointer :: object_to_add
+        class(object), pointer, intent(in) :: object_to_add
         procedure(object_action_callback), pointer :: action
         integer :: i
         type(action_holder), dimension(:), allocatable :: new_contents

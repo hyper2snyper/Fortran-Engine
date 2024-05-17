@@ -1,3 +1,7 @@
+!The main while(true) loop of the program
+!Has an action that will invoke every tick.
+!Tick speeds are defined by 'seconds_per_update' which is a float for time passed per update
+
 
 module main_loop_m
 use action_m

@@ -11,7 +11,7 @@ use curses_m, only: getch
     
 
 contains
-
+    !returns a character and pulls it from the buffer. I need to fix the pulling.
     function get_character() result(out)
     implicit none
         character :: out
@@ -33,6 +33,7 @@ contains
         end if
     end function
 
+    !polls the keyboard
     subroutine input_update(input)
     implicit none
         integer :: input

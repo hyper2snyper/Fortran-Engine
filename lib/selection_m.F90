@@ -1,3 +1,9 @@
+!A selection window.
+!Takes j, u and enter as input.
+!j moves the cursor down, u moves them up and enter selects
+!enter will call the stored function. It takes arbitrary static functions
+
+
 module selection_m
 use screen_m
 

@@ -12,6 +12,9 @@ module screen_m
     contains
     end type
 
+    !The bread and butter of a screen and the things with actual stuff.
+    !Each window has its own canvas so they operate independantly of their cousins on the screen.
+    !Abstract because there are different types
     type, abstract :: window
         type(vector2) :: pos
         type(vector2) :: bounds
@@ -34,7 +37,9 @@ module screen_m
         procedure :: fill_section
     end type
 
-
+    !The actual thing being displayed. Holds a collection of windows and makes sure they are all colored. 
+    !A screen has its own canvas which it writes to after all the windows have written to theirs.
+    !It uses their position and adjusts their contents based off of that.
     type, public :: screen
         type(window_container), dimension(:), allocatable :: windows
         integer :: size=2, index=1

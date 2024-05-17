@@ -1,3 +1,6 @@
 {
-    "fortran.linter.modOutput": "${workspaceFolder}/debug/mod"
+    "fortran.linter.modOutput": "${workspaceFolder}/debug/mod",
+    "fortran.linter.extraArgs": [
+        "-w"
+    ]
 }

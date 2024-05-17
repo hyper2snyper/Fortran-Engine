@@ -1,7 +1,7 @@
 
 module curses_m
 use, intrinsic :: iso_c_binding
-
+!Binding all the C functions for curses to work
 interface
     subroutine init_curses() bind(C, name='initialize')
     implicit none    
@@ -28,13 +28,12 @@ interface
     subroutine clear_screen() bind(C, name='clear_screen')
     implicit none
     end subroutine
+    subroutine endwin() bind(C, name='endwin')
+    implicit none
+    end subroutine
 end interface
 
-
-
-
 contains
-
 
     subroutine write_to(x, y, char, text_color, background_color)
     implicit none

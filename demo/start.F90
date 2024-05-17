@@ -46,6 +46,8 @@ implicit none
 
     call main_l%start_loop()
 
+    call endwin()
+
 end subroutine
 
 subroutine quit(selection_box, index)
@@ -61,7 +63,8 @@ use snake_main, only:start
 implicit none
     class(selection) :: selection_box
     integer :: index
-    call start()
+
+    call start(30, 25, main_l)
 end subroutine
 
 

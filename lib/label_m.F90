@@ -1,3 +1,7 @@
+!A simple label window.
+!It only has one line to display a message
+
+
 module label_m
 use screen_m
 
