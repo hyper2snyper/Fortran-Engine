@@ -83,6 +83,7 @@ implicit none
     type(vector2) :: bounds
     procedure(static_callback), pointer :: p => main_snake_loop
     procedure(action_callback), pointer :: ap => update
+    procedure(), pointer :: go => game_over
 
     main_ => main_l
 
@@ -130,7 +131,7 @@ implicit none
     call fruit_obj%setup(score_label, snake_loop)
 
     allocate(player_obj)
-    call player_obj%setup(fruit_obj, snake_loop)
+    call player_obj%setup(fruit_obj, snake_loop, go)
 
     call game_s%add_object(fruit_obj)
     call game_s%add_object(player_obj)

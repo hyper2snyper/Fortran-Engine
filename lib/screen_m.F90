@@ -92,7 +92,7 @@ contains
         if(.not. allocated(self%window_canvas)) then
             return
         end if
-        self%window_canvas(:,:) = self%fill_char
+            self%window_canvas(:,:) = self%fill_char
         self%window_colors(:,:) = self%color_fill
     end subroutine
     

@@ -4,13 +4,13 @@ use object_action_m, only:object_action_callback, object_action
 
     type, extends(object) :: snake_tail
         class(snake_tail), pointer :: head => null()
+        procedure(), pointer, nopass :: game_over
     contains
         procedure :: on_update => tail_update
         procedure :: initialize => tail_initialize
         procedure :: on_destroy => tail_destroy
         procedure :: assign_to_loop
     end type
-
 
 contains
 
@@ -28,7 +28,6 @@ contains
 
     subroutine tail_update(self, input)
     use game_space_m, only:get_object_at_pos
-    use snake_main, only:game_over
     implicit none
         class(snake_tail), target, intent(inout) :: self
         integer :: input
@@ -41,7 +40,7 @@ contains
         if(same_type_as(o, self)) then
             return
         end if
-        call game_over()
+        call self%game_over()
     end subroutine
     
     subroutine tail_initialize(self, parent)

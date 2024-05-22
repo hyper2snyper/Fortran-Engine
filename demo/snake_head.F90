@@ -8,6 +8,7 @@ use snake_tail_m, only:snake_tail
         type(vector2) :: move_vec
         class(snake_tail), pointer :: tail
         class(snake_tail), pointer :: head
+        procedure(), pointer, nopass :: game_over
     contains
         procedure :: on_update => player_on_update
         procedure :: initialize => player_initialize
@@ -18,13 +19,14 @@ use snake_tail_m, only:snake_tail
 
 contains
 
-    subroutine setup(self, fruit_obj, loop)
+    subroutine setup(self, fruit_obj, loop, go)
     use fruit_m, only:fruit
     use object_action_m, only:object_action_callback, object_action
     implicit none
         class(player), target :: self
         class(fruit) :: fruit_obj
         type(object_action), intent(inout) :: loop
+        procedure(), pointer, intent(in) :: go
         procedure(object_action_callback), pointer :: p => add_tail
         class(object), pointer :: o
         o => self
@@ -32,6 +34,8 @@ contains
 
         p=>player_move
         call loop%add_action(o, p)
+
+        self%game_over => go
 
     end subroutine
 
@@ -143,6 +147,7 @@ contains
         if(.not. associated(self%tail)) then
             allocate(self%tail)
             self%tail%pos = self%pos
+            self%tail%game_over => self%game_over
             call self%parent%add_object(self%tail)
             return
         end if
@@ -152,6 +157,7 @@ contains
         end if
 
         allocate(new_tail)
+        new_tail%game_over => self%game_over
         new_tail%head => self%tail
         new_tail%pos = self%tail%pos
         self%tail => new_tail

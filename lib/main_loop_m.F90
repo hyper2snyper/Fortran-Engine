@@ -6,7 +6,7 @@
 module main_loop_m
 use action_m
 use curses_m
-use input_handler_m, only:input_update, no_delay
+use input_handler_m, only:input_update
 
     type, public :: main_loop
         real :: seconds_per_update = 1.0/60 !60 fps
@@ -30,7 +30,6 @@ contains
         call init_curses()
         call set_nodelay(logical(self%no_delay,kind=c_bool))
         call self%on_update%add_action(p)
-        no_delay = self%no_delay
     end subroutine
 
     subroutine start_loop(self)

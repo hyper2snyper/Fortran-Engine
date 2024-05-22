@@ -34,6 +34,8 @@ implicit none
     call main_selection%set_size(bounds)
     p => start_snake
     call main_selection%add_selection("Snake", p)
+    p => start_tanks
+    call main_selection%add_selection("Tanks", p)
     p => quit
     call main_selection%add_selection("Quit", p)
 
@@ -67,6 +69,14 @@ implicit none
     call start(30, 25, main_l)
 end subroutine
 
+subroutine start_tanks(selection_box, index)
+use tanks_main, only:start
+implicit none
+    class(selection) :: selection_box
+    integer :: index
+
+    call start(50, 25, main_l)
+end subroutine
 
 
 end module

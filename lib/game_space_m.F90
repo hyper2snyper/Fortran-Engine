@@ -143,8 +143,8 @@ contains
         do y=1, self%multi_sprite%bounds%y
             do x=1, self%multi_sprite%bounds%x
                 if(h) then
-                    d_pos%y = s_pos%x+(x*v)
-                    d_pos%x = s_pos%y+(y*v)
+                    d_pos%y = s_pos%y+(x*v)
+                    d_pos%x = s_pos%x+(y*v)
                 else
                     d_pos%x = s_pos%x+(x*v)
                     d_pos%y = s_pos%y+(y*v)
@@ -252,6 +252,7 @@ implicit none
             do j=i, self%index
                 self%objects(j)%item => self%objects(j+1)%item
             end do
+            return
         end if
     end do
 end subroutine
@@ -263,16 +264,32 @@ implicit none
     type(vector2) :: pos
     class(object), pointer, optional , intent(in):: excludes
     class(object), pointer :: found
+    class(object), pointer :: c
+    type(vector2) :: lb, hb
     integer :: i
     found => null()
     do i=1, self%index
-        if(self%objects(i)%item%pos%x /= pos%x .or. self%objects(i)%item%pos%y /= pos%y) then
-            cycle
-        end if
         if(present(excludes)) then
             if(associated(self%objects(i)%item, excludes)) then
                 cycle
             end if
+        end if
+        if(self%objects(i)%item%use_multi_sprite) then
+            c => self%objects(i)%item
+            lb = c%pos
+            lb%x = lb%x-c%multi_sprite%center%x+1
+            lb%y = lb%y-c%multi_sprite%center%y+1
+            hb = c%pos
+            hb%x = hb%x+c%multi_sprite%center%x-1
+            hb%y = hb%y+c%multi_sprite%center%y-1
+            if(pos%x < lb%x .or. pos%y < lb%y .or. pos%x > hb%x .or. pos%y > hb%y) then
+                cycle
+            end if
+            found => c
+            return
+        end if
+        if(self%objects(i)%item%pos%x /= pos%x .or. self%objects(i)%item%pos%y /= pos%y) then
+            cycle
         end if
         found => self%objects(i)%item
         return

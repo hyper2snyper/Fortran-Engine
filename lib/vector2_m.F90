@@ -11,8 +11,12 @@ implicit none
         generic, public :: assignment(=) => assign
         procedure :: add
         generic, public :: operator(+) => add
+        procedure :: subtract
+        generic, public :: operator(-) => subtract
         procedure :: equals
         generic, public :: operator(==) => equals
+        procedure :: gt
+        generic, public :: operator(>) => gt
     end type
 
 contains
@@ -35,6 +39,16 @@ contains
         out%y = self%y + other%y
     end function
 
+    function subtract(self, other) result(out)
+        implicit none
+            class(vector2), intent(in) :: self
+            class(vector2), intent(in) :: other
+            type(vector2) :: out 
+    
+            out%x = self%x - other%x
+            out%y = self%y - other%y
+        end function
+
     function equals(self, other) result(out)
     implicit none
         class(vector2), intent(in) :: self
@@ -46,5 +60,15 @@ contains
         end if
     end function
 
+    function gt(self, other) result(out)
+    implicit none
+        class(vector2), intent(in) :: self
+        class(vector2), intent(in) :: other
+        logical :: out
+        out = .false.
+        if(self%x > other%x .and. self%y > other%y) then
+            out = .true.
+        end if
+    end function
 
 end module
