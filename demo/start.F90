@@ -36,6 +36,8 @@ implicit none
     call main_selection%add_selection("Snake", p)
     p => start_tanks
     call main_selection%add_selection("Tanks", p)
+    p => start_dungeon
+    call main_selection%add_selection("Dungeon", p)
     p => quit
     call main_selection%add_selection("Quit", p)
 
@@ -52,30 +54,39 @@ implicit none
 
 end subroutine
 
-subroutine quit(selection_box, index)
+subroutine quit(selection_box, i)
 implicit none
     class(selection) :: selection_box
-    integer :: index
+    integer :: i
 
     main_l%end = .true.
 end subroutine
 
-subroutine start_snake(selection_box, index)
+subroutine start_snake(selection_box, i)
 use snake_main, only:start
 implicit none
     class(selection) :: selection_box
-    integer :: index
+    integer :: i
 
     call start(30, 25, main_l)
 end subroutine
 
-subroutine start_tanks(selection_box, index)
+subroutine start_tanks(selection_box, i)
 use tanks_main, only:start
 implicit none
     class(selection) :: selection_box
-    integer :: index
+    integer :: i
 
     call start(50, 25, main_l)
+end subroutine
+
+subroutine start_dungeon(selection_box, i)
+use dungeon_main, only:start
+implicit none
+    class(selection) :: selection_box
+    integer :: i
+
+    call start(main_l)
 end subroutine
 
 

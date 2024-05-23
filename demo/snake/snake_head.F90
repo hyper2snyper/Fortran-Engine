@@ -3,6 +3,7 @@ use game_space_m, only:object, game_space
 use input_handler_m
 use vector2_m
 use snake_tail_m, only:snake_tail
+use fruit_m, only:fruit
 
     type, extends(object) :: player
         type(vector2) :: move_vec
@@ -20,7 +21,6 @@ use snake_tail_m, only:snake_tail
 contains
 
     subroutine setup(self, fruit_obj, loop, go)
-    use fruit_m, only:fruit
     use object_action_m, only:object_action_callback, object_action
     implicit none
         class(player), target :: self
