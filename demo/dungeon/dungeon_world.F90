@@ -1,7 +1,7 @@
 module dungeon_world
 use game_space_m
 use vector2_m
-use dungeon_mob
+use dungeon_mob, only:mob
 
     type :: tile
         logical :: passable = .true.
@@ -31,6 +31,8 @@ use dungeon_mob
         procedure :: refresh => world_refresh
         procedure :: world_init
         procedure :: generate_world
+        procedure :: get_offset
+        procedure :: get_tile_at_pos
     end type
 
 contains
@@ -116,6 +118,30 @@ contains
 
 !WORLD
 
+    !Gets the top left corner of the screen
+    function get_offset(self) result(offset)
+    implicit none
+        class(world) :: self
+        type(vector2) :: offset
+
+        offset%x = self%player%pos%x - (self%bounds%x/2)
+        offset%y = self%player%pos%y - (self%bounds%y/2)
+
+        if(offset%x < 1) then
+            offset%x = 1
+        end if
+        if(offset%y < 1) then
+            offset%y = 1
+        end if
+        if(offset%x+self%bounds%x > self%levels(self%current_level)%size%x) then
+            offset%x = self%levels(self%current_level)%size%x-self%bounds%x
+        end if
+        if(offset%y+self%bounds%y > self%levels(self%current_level)%size%y) then
+            offset%y = self%levels(self%current_level)%size%y-self%bounds%y
+        end if
+
+    end function
+
 
     subroutine world_refresh(self, input)
     implicit none
@@ -123,19 +149,24 @@ contains
         integer :: input
         integer :: x,y
         type(vector2) :: offset
+        integer :: i
 
         class(level), allocatable :: clevel
 
         call self%window_clear()
 
-        offset%x = self%player%pos%x - self%bounds%x/2
-        offset%y = self%player%pos%y - self%bounds%y/2
+        offset = self%get_offset()
 
         clevel = self%levels(self%current_level)
         do y=1, self%bounds%y
             do x=1, self%bounds%x
                 self%window_canvas(x,y) = clevel%tiles(x+offset%x,y+offset%y)%glyph
             end do
+        end do
+
+        do i=1, self%index
+            call self%objects(i)%item%draw(self%window_canvas, self%window_colors, self%bounds)
+            call self%objects(i)%item%on_update(input)
         end do
 
 
@@ -169,6 +200,16 @@ contains
         end do
 
     end subroutine
+
+
+    function get_tile_at_pos(self, pos) result(out)
+    implicit none
+        class(world) :: self
+        type(vector2) :: pos
+        type(tile) :: out
+        out = self%levels(self%current_level)%tiles(pos%x, pos%y)
+
+    end function
 
 
 

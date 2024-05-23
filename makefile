@@ -1,4 +1,4 @@
-HOME_DIR := /home/base/Term-Project2
+HOME_DIR := /home/base/Homework/Fortran-Engine
 
 MOD := $(HOME_DIR)/debug/mod
 OUT := $(HOME_DIR)/debug/out

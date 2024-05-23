@@ -1,9 +1,7 @@
 module dungeon_mob
 use game_space_m
-    
 
     type, extends(object) :: mob
-
     contains
         procedure :: on_update => mob_update
         procedure :: initialize => mob_initialize
@@ -33,11 +31,50 @@ contains
     end subroutine
 
     subroutine mob_draw(self, canvas, colors, canvas_bounds)
+    use dungeon_world, only:world, get_offset
     implicit none
         class(mob) :: self
         type(color_pair), dimension(:,:), allocatable :: colors
         character, dimension(:,:), allocatable :: canvas
         type(vector2) :: canvas_bounds
+
+        class(game_space), pointer :: gs
+        class(world), pointer :: pw
+
+        type(vector2) :: offset, actual
+        type(color_pair) :: c
+
+        gs => self%parent
+
+        select type(gs)
+            type is(world)
+                pw => gs
+        end select
+
+        offset = pw%get_offset()
+
+        actual = self%pos - offset
+        if(actual%x < 1) then
+            actual%x = 1
+        end if
+        if(actual%y < 1) then
+            actual%y = 1
+        end if
+        if(actual%x > pw%bounds%x) then
+            actual%x = pw%bounds%x
+        end if
+        if(actual%y > pw%bounds%y) then
+            actual%y = pw%bounds%y
+        end if
+
+        canvas(actual%x, actual%y) = self%glyph
+        
+        if(self%color%text /= -1) then
+            colors(actual%x, actual%y)%text = self%color%text
+        end if
+        if(self%color%background /= -1) then
+            colors(actual%x, actual%y)%background = self%color%background
+        end if
 
     end subroutine
 
