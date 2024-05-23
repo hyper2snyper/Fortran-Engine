@@ -55,6 +55,8 @@ use input_handler_m
 implicit none
     integer :: input
 
+    
+
     if(.not. game_ended) then
         return
     end if

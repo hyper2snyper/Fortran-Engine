@@ -78,7 +78,6 @@ contains
     end subroutine
 
     subroutine take_damage(self, damage)
-    use tanks_main, only:game_over
     implicit none
         class(player) :: self
         integer :: damage
@@ -91,7 +90,6 @@ contains
         end if
 
         call self%delete()
-        call game_over(self%player_num)
 
     end subroutine
 

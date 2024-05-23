@@ -58,6 +58,15 @@ contains
     use input_handler_m
     implicit none
         integer :: input
+
+        if(player_1%health <= 0) then
+            call game_over(1)
+        end if
+
+        if(player_2%health <= 0) then
+            call game_over(2)
+        end if
+
         if(.not. over) then
             return
         end if
