@@ -2,10 +2,10 @@ module dungeon_player
 use dungeon_mob
 use vector2_m
 use game_space_m
-
+use log_m
 
     type, extends(mob) :: player
-
+        class(log), pointer :: player_log
     contains
         procedure :: initialize => player_initialize
         procedure :: on_update => player_update
@@ -18,9 +18,20 @@ contains
         class(player), target, intent(inout) :: self
         class(game_space) :: parent
 
+        type(vector2) :: bounds
+
         self%glyph = '@'
         self%color%text = 3
         self%color%background = 1
+
+        allocate(self%player_log)
+        bounds%x = 30
+        bounds%y = self%parent%parent%canvas_size%y-10
+        call self%player_log%set_size(bounds)
+        self%player_log%pos%x = self%parent%parent%canvas_size%x-30
+        self%player_log%pos%y = 10
+        call self%parent%parent%add_window(self%player_log)
+        call self%player_log%add_message("Welcome Adventurer")
 
     end subroutine
 
@@ -53,6 +64,8 @@ contains
                 moveto%x = self%pos%x-1
             case('d')
                 moveto%x = self%pos%x+1
+            case(char(255))
+                return
         end select
 
         to_move = w%get_tile_at_pos(moveto)
@@ -60,6 +73,7 @@ contains
             return
         end if
         self%pos = moveto
+        call self%player_log%add_message("Adventurer moves.")
     end subroutine
 
 end module

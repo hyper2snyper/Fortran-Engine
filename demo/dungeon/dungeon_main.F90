@@ -25,9 +25,11 @@ contains
         f = v(8)
         call srand(f)
 
-        ms = make_new_screen(100, 50)
+        ms = make_new_screen(130, 50)
+        call add_screen(ms)
 
         allocate(gworld)
+        call ms%add_window(gworld)
         allocate(p)
         gworld%player => p
         p%pos = 100
@@ -40,9 +42,7 @@ contains
         gworld%camera_pos%y = 100
 
 
-        call ms%add_window(gworld)
 
-        call add_screen(ms)
         call set_active_screen(ms)
 
     end subroutine

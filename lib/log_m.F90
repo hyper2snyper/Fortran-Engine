@@ -30,18 +30,22 @@ contains
         integer :: input
         integer :: i
         integer :: j
-
+        integer :: y
 
         if(self%size == 0) then
             return
         end if
 
-        do i=self%size, 1, -1
+        do i=1, self%size
             do j=1, self%bounds%x-2
                 if(self%log_list(i)%message(j:) == char(0)) then
                     exit
                 end if
-                self%window_canvas(self%bounds%y-i, j+1) = self%log_list(i)%message(j:)
+                y = self%bounds%y-(self%size-i)-1
+                if(y < 2) then
+                    exit
+                end if
+                self%window_canvas(j+1, y) = self%log_list(i)%message(j:)
             end do
         
         end do
@@ -62,7 +66,8 @@ contains
         if(self%size > LOG_LEN) then
             do i=1, LOG_LEN-1
                 self%log_list(i)%message = self%log_list(i+1)%message
-            end do            
+            end do   
+            self%size = LOG_LEN         
         end if
 
         self%log_list(self%size)%message = formatted_text

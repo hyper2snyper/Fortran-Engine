@@ -1,10 +1,12 @@
+#include "colors.c"
+
 module screen_m
     use vector2_m
 
 
     type :: color_pair
-        integer :: text = 7
-        integer :: background = 0
+        integer :: text = WHITE
+        integer :: background = BLACK
     end type
 
     type :: window_container

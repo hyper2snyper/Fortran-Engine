@@ -6,6 +6,7 @@ use dungeon_mob, only:mob
     type :: tile
         logical :: passable = .true.
         character :: glyph = "."
+        type(color_pair) :: color
     contains
 
     end type
@@ -64,6 +65,8 @@ contains
                 self%tiles(x,y)%passable = .false.
             end do
         end do
+
+        
 
     end subroutine
 
@@ -127,11 +130,11 @@ contains
         offset%x = self%player%pos%x - (self%bounds%x/2)
         offset%y = self%player%pos%y - (self%bounds%y/2)
 
-        if(offset%x < 1) then
-            offset%x = 1
+        if(offset%x < 0) then
+            offset%x = 0
         end if
-        if(offset%y < 1) then
-            offset%y = 1
+        if(offset%y < 0) then
+            offset%y = 0
         end if
         if(offset%x+self%bounds%x > self%levels(self%current_level)%size%x) then
             offset%x = self%levels(self%current_level)%size%x-self%bounds%x
@@ -152,6 +155,7 @@ contains
         integer :: i
 
         class(level), allocatable :: clevel
+        type(color_pair) :: c
 
         call self%window_clear()
 
@@ -161,6 +165,8 @@ contains
         do y=1, self%bounds%y
             do x=1, self%bounds%x
                 self%window_canvas(x,y) = clevel%tiles(x+offset%x,y+offset%y)%glyph
+                c = clevel%tiles(x+offset%x,y+offset%y)%color
+                self%window_colors(x,y) = c
             end do
         end do
 
@@ -197,6 +203,10 @@ contains
 
         do i=1, self%count
             call self%levels(i)%generate_level(2)
+            self%levels(i)%tiles(:,1)%glyph = 'H'
+            self%levels(i)%tiles(:,1)%color%background = 4
+            self%levels(i)%tiles(:,1)%color%text = 7
+            self%levels(i)%tiles(:,1)%passable = .false.
         end do
 
     end subroutine
