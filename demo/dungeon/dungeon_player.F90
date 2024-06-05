@@ -3,9 +3,11 @@ use dungeon_mob
 use vector2_m
 use game_space_m
 use log_m
+use label_m
 
     type, extends(mob) :: player
         class(log), pointer :: player_log
+        class(label), pointer :: player_status
     contains
         procedure :: initialize => player_initialize
         procedure :: on_update => player_update
@@ -32,6 +34,16 @@ contains
         self%player_log%pos%y = 10
         call self%parent%parent%add_window(self%player_log)
         call self%player_log%add_message("Welcome Adventurer")
+
+        allocate(self%player_status)
+        bounds%x = 30
+        bounds%y = 10
+        call self%player_status%set_size(bounds)
+        self%player_status%pos%x = self%parent%parent%canvas_size%x-30
+        call self%parent%parent%add_window(self%player_status)
+        call self%player_status%init(8)
+        call self%player_status%set_message("Status:", 1)
+
 
     end subroutine
 
@@ -67,6 +79,13 @@ contains
             case(char(255))
                 return
         end select
+
+        if(self%pos%x < 1 .or. self%pos%y < 1) then
+            return
+        end if
+        if(self%pos%x > w%levels(w%current_level)%size%x .or. self%pos%y > w%levels(w%current_level)%size%y) then
+            return
+        end if
 
         to_move = w%get_tile_at_pos(moveto)
         if(.not. to_move%passable) then

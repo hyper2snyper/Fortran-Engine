@@ -15,7 +15,7 @@ void custom_colors()
     init_color(GREY, 138, 138, 138);
 }
 
-///I stole this
+
 int colornum(int fg, int bg)
 {
     int b, f, r, c;

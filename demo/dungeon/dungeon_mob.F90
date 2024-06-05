@@ -2,6 +2,7 @@ module dungeon_mob
 use game_space_m
 
     type, extends(object) :: mob
+        character(len=100) :: name = ""
     contains
         procedure :: on_update => mob_update
         procedure :: initialize => mob_initialize
